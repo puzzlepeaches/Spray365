@@ -42,6 +42,20 @@ auth_results: list[AuthResult] = []
     show_default=True,
 )
 @click.option(
+    "-b",
+    "--backoff",
+    metavar="",
+    type=int,
+    help="Backoff time in minutes",
+)
+@click.option(
+    "-bt",
+    "--backoff_threshold",
+    metavar="",
+    type=int,
+    help="Backoff threshold",
+)
+@click.option(
     "--resume_index",
     "-R",
     metavar="",
@@ -77,7 +91,14 @@ auth_results: list[AuthResult] = []
     show_default=True,
 )
 def command(
-    execution_plan: click.File, lockout, resume_index, ignore_success, proxy, insecure
+    execution_plan: click.File,
+    lockout,
+    resume_index,
+    ignore_success,
+    proxy,
+    insecure,
+    backoff,
+    backoff_threshold,
 ):
     console.print_info("Processing execution plan '%s'" % execution_plan.name)
 
@@ -133,6 +154,21 @@ def command(
     else:
         console.print_warning("Lockout threshold is disabled")
 
+    # Lockout backoff logic and validation
+    if not lockout and backoff:
+        console.print_warning(
+            "Lockout threshold is disabled. Cannot use backoff feature!"
+        )
+    elif backoff_threshold and not backoff:
+        console.print_error("Backoff threshold is set but backoff time is disabled")
+    elif backoff and not backoff_threshold:
+        console.print_error("Backoff time is set but backoff threshold is disabled")
+    else:
+        if backoff:
+            console.print_info("Backoff time is set to %d minutes" % backoff)
+        if backoff_threshold:
+            console.print_info("Backoff threshold is set to %d" % backoff_threshold)
+
     if ignore_success:
         console.print_warning(
             "Ignore Success flag is enabled (this may cause lockouts!)"
@@ -145,6 +181,10 @@ def command(
 
     spray_size = len(credentials)
     lockouts_observed = 0
+
+    if backoff:
+        backoffs_observed = 0
+
     start_offset = resume_index - 1 if resume_index else 0
 
     credentialed_users: list[str] = []
@@ -165,10 +205,35 @@ def command(
             if auth_result.auth_error and auth_result.auth_error.code == 50053:
                 lockouts_observed += 1
 
-            if lockout and lockouts_observed >= lockout:
-                console.print_error(
-                    "Lockout threshold reached, aborting password spray"
-                )
+            if backoff and lockouts_observed >= lockout:
+
+                # Exiting when we hit the backoff threshold
+                if backoffs_observed >= backoff_threshold:
+                    console.print_error(
+                        "Backoff threshold reached. Aborting password spraying"
+                    )
+                    break
+
+                else:
+                    console.print_info(
+                        "Lockout threshold reached. Backing off for %d minutes"
+                        % backoff
+                    )
+                    console.print_info(
+                        f"Sleeping until {datetime.datetime.now() + datetime.timedelta(minutes=backoff).strftime('%Y-%m-%d %H:%M:%S')}"
+                    )
+
+                    time.sleep(backoff * 60)
+
+                    backoff = backoff * 2
+                    backoffs_observed += 1
+                    lockouts_observed = 0
+
+            if not backoff:
+                if lockout and lockouts_observed >= lockout:
+                    console.print_error(
+                        "Lockout threshold reached, aborting password spray"
+                    )
 
             if auth_result.auth_complete_success:
                 credentialed_users.append(cred.username)
