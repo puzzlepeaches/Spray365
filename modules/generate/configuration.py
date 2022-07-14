@@ -31,6 +31,9 @@ class Configuration:
         self.shuffle_auth_order: bool = None
         self.shuffle_optimization_attempts: int = None
 
+        # Multi-tenant Options
+        self.multi_tenant: bool = None
+
         self._parse(context)
 
     def _parse(self, context: click.Context):

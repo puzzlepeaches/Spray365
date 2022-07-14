@@ -172,6 +172,42 @@ def get_credentials(
 
     return results
 
+def get_credentials_mt(
+    conf: Configuration,
+    users: list[str],
+    passwords: list[str],
+    aad_clients: dict[str, str],
+    aad_endpoints: dict[str, str],
+    user_agents: dict[str, str],
+    user_and_password_pairs: bool = False,
+) -> list[Credential]:
+
+    unique_users = list(dict.fromkeys(users))
+
+    source_data = itertools.product(unique_users, passwords)
+
+    results = []
+    client_id_values = list(aad_clients.items())
+    endpoint_id_values = list(aad_endpoints.items())
+    user_agent_values = list(user_agents.items())
+
+    for (username, password) in source_data:
+        username = username.strip()
+        results.append(
+            Credential(
+                # Domain is set already via email in multi-tenant mode
+                username.split("@")[1],
+                username.split("@")[0],
+                password,
+                random.choice(client_id_values),
+                random.choice(endpoint_id_values),
+                random.choice(user_agent_values),
+                conf.delay,
+            )
+        )
+
+    return results
+
 
 def get_credential_products(
     conf: Configuration,

@@ -18,7 +18,7 @@ general_options = [
         metavar="",
         type=str,
         help="Office 365 domain to authenticate against",
-        required=True,
+        required=False,
     ),
     click.option(
         "--delay",
@@ -126,5 +126,15 @@ user_agent_options = [
         help="Randomize user agent for authentication requests",
         default=True,
         show_default=True,
+    ),
+]
+
+tenant_options = [
+    optgroup.option(
+        "-mt",
+        "--multi_tenant",
+        metavar="",
+        is_flag=True,
+        help="Use multi-tenant mode. Support reading domain from user file on generation",
     ),
 ]

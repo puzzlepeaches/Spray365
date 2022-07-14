@@ -2,8 +2,12 @@ import json
 from typing import Callable
 
 import click
-from click_option_group import (AllOptionGroup, MutuallyExclusiveOptionGroup,
-                                RequiredMutuallyExclusiveOptionGroup, optgroup)
+from click_option_group import (
+    AllOptionGroup,
+    MutuallyExclusiveOptionGroup,
+    RequiredMutuallyExclusiveOptionGroup,
+    optgroup,
+)
 
 from modules.core import constants
 from modules.core.credential import Credential
@@ -26,6 +30,8 @@ from modules.generate.configuration import Configuration
 @add_options(options.user_agent_options)
 @optgroup.group("Shuffle options", cls=AllOptionGroup)
 @add_options(options.shuffle_options)
+@optgroup.group("Multi-tenant options", cls=AllOptionGroup)
+@add_options(options.tenant_options)
 def command(
     ctx: click.Context,
     execution_plan,
@@ -42,6 +48,7 @@ def command(
     random_user_agent,
     shuffle_auth_order,
     shuffle_optimization_attempts,
+    multi_tenant,
 ):
     conf = Configuration(ctx)
     ctx.obj = conf
@@ -58,6 +65,11 @@ def command(
         "Generating execution plan from %d users and %d passwords"
         % (len(users), len(passwords))
     )
+
+    if conf.multi_tenant and domain:
+        console.print_error("Multi-tenant mode is not compatible with a domain specification.")
+    elif not conf.multi_tenant and not domain:
+        console.print_error("A domain must be specified when not in multi-tenant mode.")
 
     if not conf.aad_client:
         console.print_info("Execution plan will use random AAD client IDs")
@@ -80,15 +92,20 @@ def command(
     else:
         user_agents = {"default": list(constants.user_agents.values())[-1]}
 
-    raw_credentials = helpers.get_credentials(
-        conf,
-        users,
-        passwords,
-        client_ids,
-        endpoint_ids,
-        user_agents,
-        bool(conf.passwords_in_userfile),
-    )
+    if conf.multi_tenant:
+        raw_credentials = helpers.get_credentials_mt(
+            conf, users, passwords, client_ids, endpoint_ids, user_agents, bool(conf.passwords_in_userfile)
+        )
+    else:
+        raw_credentials = helpers.get_credentials(
+            conf,
+            users,
+            passwords,
+            client_ids,
+            endpoint_ids,
+            user_agents,
+            bool(conf.passwords_in_userfile),
+        )
 
     console.print_info(
         "Generated execution plan with %d credentials" % (len(raw_credentials))
