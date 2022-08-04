@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import click
+import rich_click as click
 
 
 def split_comma_separated_args(ctx: click.Context, param: str, value: any) -> list[str]:

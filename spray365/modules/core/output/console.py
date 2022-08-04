@@ -3,7 +3,7 @@ import random
 import sys
 import typing
 
-import click
+import rich_click as click
 from colorama import Fore
 
 

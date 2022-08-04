@@ -1,7 +1,7 @@
-import click
+import rich_click as click
 from click_option_group import optgroup
 
-from modules.core.options.utilities import split_comma_separated_args
+from ..core.options.utilities import split_comma_separated_args
 
 general_options = [
     click.option(

@@ -1,11 +1,12 @@
 import sys
 
-import click
+# import rich_click as click
+import rich_click as click
 
-from modules.core.output import console
-from modules.generate import generate
-from modules.review import review
-from modules.spray import spray
+from .modules.core.output import console
+from .modules.generate import generate
+from .modules.review import review
+from .modules.spray import spray
 
 version = "0.2.2-beta"
 

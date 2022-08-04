@@ -1,5 +1,0 @@
-click==8.1.*
-click_option_group==0.5.*
-colorama==0.4.*
-msal==1.17.*
-urllib3~=1.26.9

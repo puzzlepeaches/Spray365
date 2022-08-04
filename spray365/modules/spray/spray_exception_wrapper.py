@@ -1,10 +1,10 @@
 import sys
 import traceback
 
-import click
+import rich_click as click
 
-from modules.core.output import console
-from modules.spray import helpers, spray
+from ..core.output import console
+from ..spray import helpers, spray
 
 
 class SprayExceptionWrapper(click.Command):
@@ -25,3 +25,5 @@ class SprayExceptionWrapper(click.Command):
                 traceback.print_exc()
             helpers.export_auth_results(spray.auth_results)
             sys.exit(1)
+        except RuntimeError:
+            pass

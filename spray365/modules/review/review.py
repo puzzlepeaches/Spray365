@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import json
 
-import click
+import rich_click as click
 
-from modules.core.auth_result import AuthResult
-from modules.core.output import console
-from modules.review.helpers import decode_auth_result_item
+from ..core.auth_result import AuthResult
+from ..core.output import console
+from ..review.helpers import decode_auth_result_item
 
 auth_results: list[AuthResult] = []
 

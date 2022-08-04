@@ -6,11 +6,11 @@ import warnings
 
 from msal import PublicClientApplication
 
-from modules.core import constants
-from modules.core.auth_error import AuthError
-from modules.core.auth_result import AuthResult
-from modules.core.credential import Credential
-from modules.core.output import console
+from ..core import constants
+from ..core.auth_error import AuthError
+from ..core.auth_result import AuthResult
+from ..core.credential import Credential
+from ..core.output import console
 
 warnings.filterwarnings("ignore")
 

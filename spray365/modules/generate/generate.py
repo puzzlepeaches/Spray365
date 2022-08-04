@@ -1,6 +1,7 @@
-import click
+import rich_click as click
 
-from modules.generate.modes import audit, normal
+#from .modules.generate.modes import audit, normal
+from .modes import audit, normal
 
 
 @click.group("generate", help="Generate an execution plan to use for password spraying")

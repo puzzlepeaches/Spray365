@@ -6,11 +6,11 @@ import typing
 from pathlib import Path
 from typing import Callable
 
-import click
+import rich_click as click
 
-from modules.core.credential import Credential
-from modules.core.output import console
-from modules.generate.configuration import Configuration
+from ..core.credential import Credential
+from ..core.output import console
+from ..generate.configuration import Configuration
 
 
 def check_if_execution_plan_exists(conf: Configuration):

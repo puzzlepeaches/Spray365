@@ -4,17 +4,17 @@ import datetime
 import json
 import time
 
-import click
+import rich_click as click
 from click_option_group import AllOptionGroup, optgroup
 from colorama import Fore
 
-from modules.core.auth_result import AuthResult
-from modules.core.credential import Credential
-from modules.core.output import console
-from modules.generate import helpers as generate_helpers
-from modules.spray import helpers
-from modules.spray.helpers import decode_execution_plan_item
-from modules.spray.spray_exception_wrapper import SprayExceptionWrapper
+from ..core.auth_result import AuthResult
+from ..core.credential import Credential
+from ..core.output import console
+from ..generate import helpers as generate_helpers
+from ..spray import helpers
+from ..spray.helpers import decode_execution_plan_item
+from ..spray.spray_exception_wrapper import SprayExceptionWrapper
 
 auth_results: list[AuthResult] = []
 
