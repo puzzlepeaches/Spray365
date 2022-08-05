@@ -243,20 +243,28 @@ Options:
   <summary>Spray Mode</summary>
   
   ```
-Usage: spray365 spray [OPTIONS]
+  Usage: spray365 spray [OPTIONS]
 
   Password spray user accounts using an existing execution plan
 
 Options:
   -ep, --execution_plan         File path to execution plan  [required]
-  -l, --lockout                 Number of account lockouts to observe before aborting spraying session (disable with 0)  [default: 5]
-  -R, --resume_index            Resume spraying passwords from this position in the execution plan  [x>=1]
-  -i, --ignore_success          Ignore successful authentication attempts for users and continue to spray credentials. Setting this flag will enable spraying credentials for users even if Spray365 has already identified valid credentials.
-
+  -l, --lockout                 Number of account lockouts to observe before
+                                aborting spraying session (disable with 0)
+                                [default: 5]
+  -b, --backoff                 Backoff time in minutes
+  -bt, --backoff_threshold      Backoff threshold
+  -R, --resume_index            Resume spraying passwords from this position
+                                in the execution plan  [x>=1]
+  -i, --ignore_success          Ignore successful authentication attempts for
+                                users and continue to spray credentials.
+                                Setting this flag will enable spraying
+                                credentials for users even if Spray365 has
+                                already identified valid credentials.
   Proxy options: [all_or_none]
-    -x, --proxy                 HTTP Proxy URL (format: http[s]://proxy.address:port)
+    -x, --proxy                 HTTP Proxy URL (format:
+                                http[s]://proxy.address:port)
     -k, --insecure              Disable HTTPS certificate verification
-
   -h, --help                    Show this message and exit.
 ```
 </details>
