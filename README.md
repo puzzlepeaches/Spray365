@@ -13,7 +13,7 @@
   <a href="https://github.com/MarkoH17/Spray365/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/MarkoH17/Spray365?&style=flat-square">
   </a>
-  <a href="https://github.com/MarkoH17/Spray365/blob/main/spray365.py">
+  <a href="https://github.com/MarkoH17/Spray365/blob/main/spray365">
     <img src="https://img.shields.io/github/languages/top/markoh17/spray365?style=flat-square">
   </a>
   <br>
@@ -41,47 +41,93 @@ Spray365 exposes a few options that are useful when spraying credentials. Random
    - 3.10 (recommended)
 
 ### Installation
-Clone the repository, install the required Python packages, and run Spray365!
+If the package is availible via pip, you can install it with the following command:
+
 ```bash
-$ git clone https://github.com/MarkoH17/Spray365
-$ cd Spray365
-~/Spray365$ pip3 install -r requirements.txt -U
-~/Spray365$ python3 spray365.py
+pipx install spray365
+```
+
+If the package is not availible via pip, you can install it with the following commands:
+
+```bash
+git clone https://github.com/MarkoH17/Spray365
+cd Spray365
+pip3 install .
+```
+
+For development purposes, you can also install it with the following commands:
+
+```bash
+git clone https://github.com/MarkoH17/Spray365
+cd Spray365
+poetry shell
+poetry install
 ```
 
 ### Usage
-#### Generate an Execution Plan (Normal)
-An execution plan is needed to spray credentials, so we need to create one! Spray365 can generate its own execution plan by running the generate command in "normal" mode: (`spray365.py generate normal`). See help (`spray365.py generate -h / spray365.py generate normal -h`) for more detail.
+
+Once installed, spray365 can be used with the following commands:
+
 ```bash
-$ python3 spray365.py generate normal -ep <execution_plan_filename> -d <domain_name> -u <file_containing_usernames> -pf <file_containing_passwords>
+spray365
+s365
+```
+
+#### Generate an Execution Plan (Normal)
+An execution plan is needed to spray credentials, so we need to create one! Spray365 can generate its own execution plan by running the generate command in "normal" mode: (`spray365 generate normal`). See help (`spray365 generate -h / spray365 generate normal -h`) for more detail.
+```bash
+spray365 generate normal -ep <execution_plan_filename> -d <domain_name> -u <file_containing_usernames> -pf <file_containing_passwords>
+
 ```
 e.g.
 ```bash
-$ python3 spray365.py generate normal -ep ex-plan.s365 -d example.com -u usernames -pf passwords
+spray365 generate normal -ep ex-plan.s365 -d example.com -u usernames -pf passwords
 ```
+
+Spray365 also supports a multi tenant execution plan. This is useful when you have multiple domains that need to be sprayed. To generate a multi tenant execution plan, you can run the following command:
+
+```bash
+spray365 generate normal -ep <execution_plan_filename> -u <file_containing_emails> -pf <file_containing_passwords> -ep ex-plan.s365 -mt
+```
+
+Note that here that we do not need to specify a domain. The tool alternately pulls domains from the file containing target email addresses.
 
 #### Generate an Execution Plan (Audit)
 Spray365 can also audit multifactor authentication (MFA) and conditional access policy configurations by spraying valid credentials. Audit-style execution plans attempt all combinations of User-Agent + AAD Client ID + AAD Endpoint ID for a given pair of credentials.
 
-Spray365 can generate an audit-style execution plan by running the generate command in "audit" mode: (`spray365.py generate audit`). See help (`spray365.py generate -h / spray365.py generate audit -h`) for more detail. While it is possible to provide a list of users and passwords separately (`-u` and `-pf`), these options better suit execution plans for password spraying (not auditing), which would likely cause many invalid login attempts. Instead, consider `-u / --user_file` with `--passwords_in_userfile`, which will instruct Spray365 to extract the passwords from "user_file" by splitting each line in the input file on a colon, where the value before the colon is treated as the username, and the value after the colon is treated as the password (e.g. `<username>:<password>`, `jsmith:Password01`). 
+Spray365 can generate an audit-style execution plan by running the generate command in "audit" mode: (`spray365 generate audit`). See help (`spray365 generate -h / spray365 generate audit -h`) for more detail. While it is possible to provide a list of users and passwords separately (`-u` and `-pf`), these options better suit execution plans for password spraying (not auditing), which would likely cause many invalid login attempts. Instead, consider `-u / --user_file` with `--passwords_in_userfile`, which will instruct Spray365 to extract the passwords from "user_file" by splitting each line in the input file on a colon, where the value before the colon is treated as the username, and the value after the colon is treated as the password (e.g. `<username>:<password>`, `jsmith:Password01`). 
 
 ```bash
-$ python3 spray365.py generate audit -ep <execution_plan_filename> -d <domain_name> -u <file_containing_usernames_and_passwords> --passwords_in_userfile
+spray365 generate audit -ep <execution_plan_filename> -d <domain_name> -u <file_containing_usernames_and_passwords> --passwords_in_userfile
 ```
 e.g.
 ```bash
-$ python3 spray365.py generate audit -ep ex-plan.s365 -d example.com -u usernames --passwords_in_userfile
+spray365 generate audit -ep ex-plan.s365 -d example.com -u usernames --passwords_in_userfile
 ```
 
 #### Spraying an Execution Plan
-Once an execution plan is created, Spray365 can be used to process it. Running Spray365 in "spray" (`spray365.py spray`) mode will process the specified execution plan and spray the appropriate credentials. All types of execution plans (normal and audit) can be processed in this mode. See help (`spray365.py spray -h`) for more detail.
+Once an execution plan is created, Spray365 can be used to process it. Running Spray365 in "spray" (`spray365 spray`) mode will process the specified execution plan and spray the appropriate credentials. All types of execution plans (normal and audit) can be processed in this mode. See help (`spray365.py spray -h`) for more detail.
 ```bash
-$ python3 spray365.py spray -ep <execution_plan_filename>
+spray365 spray -ep <execution_plan_filename>
 ```
 e.g.
 ```bash
-$ python3 spray365.py spray -ep ex-plan.s365
+spray365 spray -ep ex-plan.s365
 ```
+
+Spray365 also supports a backoff strategy for dynamically pausing and resuming spray operations. This is useful to perform long term password sprays wherein Azure AD is falsely reporting a locked account. This option is enabled using the backoff and backoff threshold commands:
+  
+  ```bash
+  spray365 spray -ep <execution_plan_filename> -b <backoff_time_minutes> -bt <backoff_threshold> -l <lockout>
+  ```
+
+  e.g.
+  ```bash
+  spray365 spray -ep ex-plan.s365 -b 60 -bt 10 -l 10
+  ```
+
+The command above will execute a password spray. If the lockout threshold is met, the spray will pause for the specified backoff time. Everytime the lockout threshold is met after the first backoff time threshold is met, the backoff time period will double. If this backoff time period is expanded beyond the backoff threshold, the spray will stop.
+
 
 #### Reviewing the Results of a Spraying Operation
 After spraying credentials from an execution plan, Spray365 outputs a JSON file with the results. This file can be processed using other tools like JQ to gain insights about the spraying operation after it has occurred. However, Spray365 also includes a "review" command which can be used to learn about:
@@ -89,13 +135,13 @@ After spraying credentials from an execution plan, Spray365 outputs a JSON file 
  - Valid (and invalid) Credentials
  - Partial Valid Credentials (Authentication succeeded, but access was prevented by MFA / Conditional Access Policies)
 
-See help (`spray365.py review -h`) for more detail.
+See help (`spray365 review -h`) for more detail.
 ```bash
-$ python3 spray365.py review <spray_results_json_filename>
+spray365 review <spray_results_json_filename>
 ```
 e.g.
 ```bash
-$ python3 spray365.py review spray365_results_2022-05-20_18-58-31.json
+spray365 review spray365_results_2022-05-20_18-58-31.json
 ```
 
 ## Spray365 Usage
@@ -104,36 +150,61 @@ $ python3 spray365.py review spray365_results_2022-05-20_18-58-31.json
   <summary>Generate Mode (Normal)</summary>
   
   ```
-Usage: spray365.py generate normal [OPTIONS]
+Usage: spray365 generate normal [OPTIONS]
 
   Generate a vanilla (normal) execution plan
 
 Options:
-  -ep, --execution_plan           File path where execution plan should be saved  [required]
-  -d, --domain                    Office 365 domain to authenticate against  [required]
-  --delay                         Delay in seconds to wait between authentication attempts  [default: 30]
-  -mD, --min_loop_delay           Minimum time to wait between authentication attempts for a given user. This option takes into account the time one spray iteration will take, so a pre-authentication delay may not occur every time  [default: 0]
-  
-  User options:
-    -u, --user_file               File containing usernames to spray (one per line without domain)  [required]
-
+  -ep, --execution_plan           File path where execution plan should be
+                                  saved  [required]
+  -d, --domain                    Office 365 domain to authenticate against
+  --delay                         Delay in seconds to wait between
+                                  authentication attempts  [default: 30]
+  -mD, --min_loop_delay           Minimum time to wait between authentication
+                                  attempts for a given user. This option takes
+                                  into account the time one spray iteration
+                                  will take, so a pre-authentication delay may
+                                  not occur every time  [default: 0]
+  User options: 
+    -u, --user_file               File containing usernames to spray (one per
+                                  line without domain)  [required]
   Password options: [mutually_exclusive, required]
     -p, --password                Password to spray
-    -pf, --password_file          File containing passwords to spray (one per line)
-    --passwords_in_userfile       Extract passwords from user_file (colon separated)
-
-  Authentication options:
-    -cID, --aad_client            Client ID used during authentication. Leave unspecified for random selection, or provide a comma-separated string
-    -eID, --aad_endpoint          Endpoint ID used during authentication. Leave unspecified for random selection, or provide a comma-separated string
-
+    -pf, --password_file          File containing passwords to spray (one per
+                                  line)
+    --passwords_in_userfile       Extract passwords from user_file (colon
+                                  separated)
+  Authentication options: 
+    -cID, --aad_client            Client ID used during authentication. Leave
+                                  unspecified for random selection, or provide
+                                  a comma-separated string
+    -eID, --aad_endpoint          Endpoint ID used during authentication.
+                                  Leave unspecified for random selection, or
+                                  provide a comma-separated string
   User Agent options: [mutually_exclusive]
-    -cUA, --custom_user_agent     Set custom user agent for authentication requests
-    -rUA, --random_user_agent     Randomize user agent for authentication requests  [default: True]
-
+    -cUA, --custom_user_agent     Set custom user agent for authentication
+                                  requests
+    -rUA, --random_user_agent     Randomize user agent for authentication
+                                  requests  [default: True]
   Shuffle options: [all_or_none]
-    -S, --shuffle_auth_order      Shuffle order of authentication attempts so that each iteration (User1:Pass1, User2:Pass1, User3:Pass1) will be sprayed in a random order with a random arrangement of passwords, e.g (User4:Pass16, User13:Pass25, User19:Pass40). Be aware this option introduces the possibility that the time between consecutive authentication attempts for a given user may occur DELAY seconds apart. Consider using the-mD/--min_loop_delay option to enforce a minimum delay between authentication attempts for any given user.
-    -SO, --shuffle_optimization_attempts [default: 10]
-
+    -S, --shuffle_auth_order      Shuffle order of authentication attempts so
+                                  that each iteration (User1:Pass1,
+                                  User2:Pass1, User3:Pass1) will be sprayed in
+                                  a random order with a random arrangement of
+                                  passwords, e.g (User4:Pass16, User13:Pass25,
+                                  User19:Pass40). Be aware this option
+                                  introduces the possibility that the time
+                                  between consecutive authentication attempts
+                                  for a given user may occur DELAY seconds
+                                  apart. Consider using the-
+                                  mD/--min_loop_delay option to enforce a
+                                  minimum delay between authentication
+                                  attempts for any given user.
+    -SO, --shuffle_optimization_attempts 
+                                  [default: 10]
+  Multi-tenant options: [all_or_none]
+    -mt, --multi_tenant           Use multi-tenant mode. Support reading
+                                  domain from user file on generation
   -h, --help                      Show this message and exit.
 ```
 </details>
@@ -142,7 +213,7 @@ Options:
   <summary>Generate Mode (Audit)</summary>
   
   ```
-Usage: spray365.py generate audit [OPTIONS]
+Usage: spray365 generate audit [OPTIONS]
 
   Generate an execution plan to identify flaws in MFA / Conditional Access Policies. This works best with with known credentials.
 
@@ -172,7 +243,7 @@ Options:
   <summary>Spray Mode</summary>
   
   ```
-Usage: spray365.py spray [OPTIONS]
+Usage: spray365 spray [OPTIONS]
 
   Password spray user accounts using an existing execution plan
 
@@ -194,7 +265,7 @@ Options:
   <summary>Review Mode</summary>
   
   ```
-Usage: spray365.py review [OPTIONS] RESULTS
+Usage: spray365 review [OPTIONS] RESULTS
 
   View data from password spraying results to identify valid accounts and more
 
