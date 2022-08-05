@@ -4,7 +4,7 @@ import datetime
 import json
 import time
 
-import rich_click as click
+import click
 from click_option_group import AllOptionGroup, optgroup
 from colorama import Fore
 
@@ -267,6 +267,7 @@ def _print_credential_authentication_output(
     if auth_result is None:
         status = "%s(waiting...)" % Fore.BLUE
     elif auth_result.auth_complete_success:
+        # TODO add notification function here
         status = "%s(Authentication Success)" % Fore.GREEN
     elif auth_result.auth_partial_success:
         status = "%s(Partial Success: %s)" % (

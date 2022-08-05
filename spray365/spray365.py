@@ -1,7 +1,7 @@
 import sys
 
-# import rich_click as click
-import rich_click as click
+# import click
+import click
 
 from .modules.core.output import console
 from .modules.generate import generate

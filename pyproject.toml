@@ -1,8 +1,21 @@
 [tool.poetry]
 name = "spray365"
-version = "0.1.0"
+version = "0.2.2"
 description = "Spray365 makes spraying Microsoft accounts (Office 365 / Azure AD) easy through its customizable two-step password spraying approach."
-authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+homepage = "https://github.com/MarkoH17/Spray365"
+repository = "https://github.com/MarkoH17/Spray365"
+authors = ["MarkoH17 <you@example.com>"]
+exclude = ["tests"]
+include = ["LICENSE"]
+
+classifiers = [
+    "Environment :: Console",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+
+packages = [{ include = "spray365" }]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -11,7 +24,6 @@ click-option-group = "0.5.*"
 colorama = "0.4.*"
 msal = "1.17.*"
 urllib3 = "~=1.26.9"
-rich-click = "^1.5.2"
 
 [tool.poetry.dev-dependencies]
 

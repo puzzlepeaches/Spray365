@@ -1,7 +1,7 @@
 import json
 from typing import Callable
 
-import rich_click as click
+import click
 from click_option_group import (
     AllOptionGroup,
     MutuallyExclusiveOptionGroup,
@@ -67,7 +67,9 @@ def command(
     )
 
     if conf.multi_tenant and domain:
-        console.print_error("Multi-tenant mode is not compatible with a domain specification.")
+        console.print_error(
+            "Multi-tenant mode is not compatible with a domain specification."
+        )
     elif not conf.multi_tenant and not domain:
         console.print_error("A domain must be specified when not in multi-tenant mode.")
 
@@ -94,7 +96,13 @@ def command(
 
     if conf.multi_tenant:
         raw_credentials = helpers.get_credentials_mt(
-            conf, users, passwords, client_ids, endpoint_ids, user_agents, bool(conf.passwords_in_userfile)
+            conf,
+            users,
+            passwords,
+            client_ids,
+            endpoint_ids,
+            user_agents,
+            bool(conf.passwords_in_userfile),
         )
     else:
         raw_credentials = helpers.get_credentials(

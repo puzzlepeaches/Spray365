@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-import rich_click as click
+import click
 
 from ..core.output import console
 from ..spray import helpers, spray

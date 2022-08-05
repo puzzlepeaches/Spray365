@@ -1,6 +1,6 @@
-import rich_click as click
+import click
 
-#from .modules.generate.modes import audit, normal
+# from .modules.generate.modes import audit, normal
 from .modes import audit, normal
 
 

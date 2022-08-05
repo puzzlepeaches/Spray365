@@ -1,4 +1,4 @@
-import rich_click as click
+import click
 from click_option_group import optgroup
 
 from ..core.options.utilities import split_comma_separated_args

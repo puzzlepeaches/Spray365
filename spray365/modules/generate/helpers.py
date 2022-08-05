@@ -6,7 +6,7 @@ import typing
 from pathlib import Path
 from typing import Callable
 
-import rich_click as click
+import click
 
 from ..core.credential import Credential
 from ..core.output import console
@@ -171,6 +171,7 @@ def get_credentials(
         )
 
     return results
+
 
 def get_credentials_mt(
     conf: Configuration,

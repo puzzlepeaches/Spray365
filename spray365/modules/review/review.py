@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-import rich_click as click
+import click
 
 from ..core.auth_result import AuthResult
 from ..core.output import console

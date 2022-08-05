@@ -1,7 +1,7 @@
 import json
 from typing import Callable
 
-import rich_click as click
+import click
 from click_option_group import (
     AllOptionGroup,
     RequiredMutuallyExclusiveOptionGroup,

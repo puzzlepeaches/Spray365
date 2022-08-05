@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import rich_click as click
+import click
 
 
 class Configuration:
