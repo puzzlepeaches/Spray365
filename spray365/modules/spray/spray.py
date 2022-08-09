@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import os
 import time
 
 import click
@@ -103,6 +104,12 @@ def command(
     console.print_info("Processing execution plan '%s'" % execution_plan.name)
 
     raw_execution_plan = ""
+
+    # Create output directory if it doesn't exist
+    user = os.path.expanduser("~") 
+    if not os.path.exists(f'{user}/.spray36/output/'):
+        os.mkdir(f'{user}/.spray36/output/')
+
 
     for line in execution_plan:
         raw_execution_plan += line

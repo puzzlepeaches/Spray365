@@ -65,6 +65,14 @@ password_options = [
         is_flag=True,
         help="Extract passwords from user_file (colon separated)",
     ),
+    optgroup.option(
+        "-gp",
+        "--generate_passwords",
+        metavar="",
+        # type=click.File(mode="r"),
+        flag_value=True,
+        help="Generate passwords from user domain in multi_tenant mode",
+    ),
 ]
 
 shuffle_options = [

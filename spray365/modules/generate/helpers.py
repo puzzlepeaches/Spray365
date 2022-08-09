@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+import json
 import random
 import typing
 from pathlib import Path
@@ -49,7 +50,6 @@ def get_passwords(conf: Configuration) -> list[str]:
         password_list.append(conf.password)
 
     return password_list
-
 
 def get_users(conf: Configuration) -> list[str]:
     user_list: list[str] = []
@@ -181,6 +181,7 @@ def get_credentials_mt(
     aad_endpoints: dict[str, str],
     user_agents: dict[str, str],
     user_and_password_pairs: bool = False,
+    generate_passwords: bool = False, 
 ) -> list[Credential]:
 
     unique_users = list(dict.fromkeys(users))
@@ -192,20 +193,41 @@ def get_credentials_mt(
     endpoint_id_values = list(aad_endpoints.items())
     user_agent_values = list(user_agents.items())
 
-    for (username, password) in source_data:
-        username = username.strip()
-        results.append(
-            Credential(
-                # Domain is set already via email in multi-tenant mode
-                username.split("@")[1],
-                username.split("@")[0],
-                password,
-                random.choice(client_id_values),
-                random.choice(endpoint_id_values),
-                random.choice(user_agent_values),
-                conf.delay,
+    if generate_passwords is True:
+        numbers = [2022, 2021]
+        specials = ['!', '@']
+        for username in unique_users:
+            for number in numbers:
+                for special in specials:
+                    username = username.strip()
+                    results.append(
+                        Credential(
+                            # Domain is set already via email in multi-tenant mode
+                            # Dynamically creating passwords from email domain
+                            username.split("@")[1],
+                            username.split("@")[0],
+                            f"{username.split('@')[1].split('.')[0].title()}{number}{special}",
+                            random.choice(client_id_values),
+                            random.choice(endpoint_id_values),
+                            random.choice(user_agent_values),
+                            conf.delay,
+                        )
+                    )
+    else:
+        for (username, password) in source_data:
+            username = username.strip()
+            results.append(
+                Credential(
+                    # Domain is set already via email in multi-tenant mode
+                    username.split("@")[1],
+                    username.split("@")[0],
+                    password,
+                    random.choice(client_id_values),
+                    random.choice(endpoint_id_values),
+                    random.choice(user_agent_values),
+                    conf.delay,
+                )
             )
-        )
 
     return results
 

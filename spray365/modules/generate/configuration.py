@@ -18,6 +18,7 @@ class Configuration:
         self.password: str = None
         self.password_file: str = None
         self.passwords_in_userfile: bool = None
+        self.generate_passwords: bool = None
 
         # Authentication Options
         self.aad_client: list[str] = None

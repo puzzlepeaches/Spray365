@@ -41,6 +41,7 @@ def command(
     user_file,
     password,
     password_file,
+    generate_passwords,
     passwords_in_userfile,
     aad_client,
     aad_endpoint,
@@ -66,12 +67,22 @@ def command(
         % (len(users), len(passwords))
     )
 
+    if conf.generate_passwords and not conf.multi_tenant:
+        console.print_error(
+            "Generating passwords is only supported in multi-tenant mode"
+        )
+
     if conf.multi_tenant and domain:
         console.print_error(
             "Multi-tenant mode is not compatible with a domain specification."
         )
     elif not conf.multi_tenant and not domain:
         console.print_error("A domain must be specified when not in multi-tenant mode.")
+    
+    if not conf.multi_tenant and conf.generate_passwords:
+        console.print_error(
+            "Generating passwords is not supported in single-tenant mode."
+        )
 
     if not conf.aad_client:
         console.print_info("Execution plan will use random AAD client IDs")
@@ -94,7 +105,18 @@ def command(
     else:
         user_agents = {"default": list(constants.user_agents.values())[-1]}
 
-    if conf.multi_tenant:
+    if conf.multi_tenant and conf.generate_passwords:
+        raw_credentials = helpers.get_credentials_mt(
+            conf,
+            users,
+            passwords,
+            client_ids,
+            endpoint_ids,
+            user_agents,
+            bool(conf.passwords_in_userfile),
+            bool(conf.generate_passwords),
+        )
+    elif conf.multi_tenant and not conf.generate_passwords:
         raw_credentials = helpers.get_credentials_mt(
             conf,
             users,

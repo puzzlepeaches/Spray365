@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import os
 import warnings
 
 from msal import PublicClientApplication
@@ -106,28 +107,31 @@ def get_auth_error(raw_auth_result: dict[str]) -> AuthError:
         else None
     )
 
-    if error_code == 50034:
-        message = "User not found"
-    elif error_code == 50053:
-        message = "Account locked"
-    elif error_code == 50055:
-        message = "Account password expired"
-    elif error_code == 50057:
-        message = "Account disabled"
-    elif error_code == 50158:
-        message = "External validation failed (is there a conditional access policy?)"
-    elif error_code == 50076:
-        message = "Multi-Factor Authentication Required"
-    elif error_code == 50126:
-        message = "Invalid credentials"
-    elif error_code == 53003:
-        message = "Conditional access policy prevented access"
-    else:
-        message = "An unknown error occurred"
+    try:
+        if error_code == 50034:
+            message = "User not found"
+        elif error_code == 50053:
+            message = "Account locked"
+        elif error_code == 50055:
+            message = "Account password expired"
+        elif error_code == 50057:
+            message = "Account disabled"
+        elif error_code == 50158:
+            message = "External validation failed (is there a conditional access policy?)"
+        elif error_code == 50076:
+            message = "Multi-Factor Authentication Required"
+        elif error_code == 50126:
+            message = "Invalid credentials"
+        elif error_code == 53003:
+            message = "Conditional access policy prevented access"
+        else:
+            message = "An unknown error occurred"
 
-    return AuthError(
-        timestamp, trace_id, correlation_id, message, error_code, raw_error_message
-    )
+        return AuthError(
+            timestamp, trace_id, correlation_id, message, error_code, raw_error_message
+        )
+    except Exception as e:
+        pass
 
 
 def export_auth_results(auth_results: list[AuthResult]):
@@ -136,8 +140,9 @@ def export_auth_results(auth_results: list[AuthResult]):
     )
 
     json_execution_plan = json.dumps(auth_results, default=lambda o: o.__dict__)
+    user = os.path.expanduser("~") 
 
-    with open(export_file, "w") as execution_plan_file:
+    with open(f'{user}/.spray36/output{export_file}', "w") as execution_plan_file:
         execution_plan_file.write(json_execution_plan)
 
-    console.print_info("Authentication results saved to file '%s'" % export_file)
+    console.print_info(f"Authentication results saved to file {user}/.spray36/output{export_file}")
