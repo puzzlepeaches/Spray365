@@ -142,7 +142,7 @@ def export_auth_results(auth_results: list[AuthResult]):
     json_execution_plan = json.dumps(auth_results, default=lambda o: o.__dict__)
     user = os.path.expanduser("~") 
 
-    with open(f'{user}/.spray36/output{export_file}', "w") as execution_plan_file:
+    with open(f'{user}/.spray365/output/{export_file}', "w") as execution_plan_file:
         execution_plan_file.write(json_execution_plan)
 
-    console.print_info(f"Authentication results saved to file {user}/.spray36/output{export_file}")
+    console.print_info(f"Authentication results saved to file {user}/.spray365/output/{export_file}")

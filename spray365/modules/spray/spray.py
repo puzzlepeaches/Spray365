@@ -107,8 +107,8 @@ def command(
 
     # Create output directory if it doesn't exist
     user = os.path.expanduser("~") 
-    if not os.path.exists(f'{user}/.spray36/output/'):
-        os.mkdir(f'{user}/.spray36/output/')
+    if not os.path.exists(f'{user}/.spray365/output/'):
+        os.mkdir(f'{user}/.spray365/output/')
 
 
     for line in execution_plan:
