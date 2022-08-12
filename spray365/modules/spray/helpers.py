@@ -5,6 +5,7 @@ import json
 import os
 import warnings
 
+import requests
 from msal import PublicClientApplication
 
 from ..core import constants
@@ -18,6 +19,9 @@ warnings.filterwarnings("ignore")
 
 def decode_execution_plan_item(credential_dict):
     return Credential(**credential_dict)
+
+def notify(message: str):
+    pass
 
 
 def authenticate_credential(

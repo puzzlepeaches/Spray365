@@ -74,6 +74,7 @@ auth_results: list[AuthResult] = []
     default=False,
     show_default=True,
 )
+@click.option("-n", "--notify", metavar="", help="Notify user of successful authentication using Slack webhook")
 @optgroup.group("Proxy options", cls=AllOptionGroup)
 @optgroup.option(
     "--proxy",
@@ -100,6 +101,7 @@ def command(
     insecure,
     backoff,
     backoff_threshold,
+    notify,
 ):
     console.print_info("Processing execution plan '%s'" % execution_plan.name)
 
@@ -137,6 +139,7 @@ def command(
             "Resume index '%d' is larger than the number of credentials (%d) in the execution plan"
             % (resume_index, number_of_creds_to_spray)
         )
+
 
     if resume_index:
         console.print_info(
@@ -183,6 +186,9 @@ def command(
 
     if proxy:
         console.print_info("Proxy (HTTP/HTTPS) set to '%s'" % proxy)
+    
+    if notify:
+        console.print_info("Notifications enabled. Webhook URL: %s" % notify)
 
     console.print_info("Starting to spray credentials")
 
@@ -230,8 +236,11 @@ def command(
                         "Lockout threshold reached. Backing off for %d minutes"
                         % backoff
                     )
+                    backoffed = datetime.timedelta(minutes=backoff)
+                    now = datetime.datetime.now()
+                    future = now + backoffed
                     console.print_info(
-                        f"Sleeping until {datetime.datetime.now() + datetime.timedelta(minutes=backoff).strftime('%Y-%m-%d %H:%M:%S')}"
+                        f"Sleeping until {future.strftime('%Y-%m-%d %H:%M:%S')}"
                     )
 
                     time.sleep(backoff * 60)
