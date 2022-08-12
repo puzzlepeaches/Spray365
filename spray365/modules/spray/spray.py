@@ -212,6 +212,10 @@ def command(
             if auth_result.auth_error and auth_result.auth_error.code == 50053:
                 lockouts_observed += 1
 
+            # TODO Account Disabled erros seem to be used in smart lockout now.
+            elif auth_result.auth_error and auth_result.auth_error.code == 50057:
+                lockouts_observed += 1
+
             if backoff and lockouts_observed >= lockout:
 
                 # Exiting when we hit the backoff threshold
